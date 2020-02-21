@@ -68,26 +68,44 @@ export default {
     return {
       commentstr: '',
       circleUrl: '',
-      articleTitle: '文章名称',
-      articleTime: '2020-01-01',
-      articleSort: 'spring mvc',
-      articleBrowse: 200,
+      articleTitle: '',
+      articleTime: '',
+      articleSort: '',
+      articleBrowse: 0,
       articleContent: ''
     }
   },
   components: {
     cbread
   },
+  methods: {
+    // 获取文章具体内容
+    getArticleContent: function () {
+      var params = new URLSearchParams()
+      params.append('id', this.$route.params.id)
+      this.axios.get('http://127.0.0.1:8080/moblog/blog/article', { params: params })
+        .then(response => {
+          var data = response.data.article
+          console.log(data)
+
+          // for (var i = 0; i < data.articlelist.length; i++) {
+          //   var labels = data.articlelist[i].label
+          //   data.articlelist[i].label = labels.split(',')
+          // }
+          this.articleTitle = data.title
+          this.articleTime = data.publisht
+          this.articleSort = data.sort
+          this.articleBrowse = data.browse
+          this.articleContent = data.content
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
+    }
+  },
   mounted () {
-    // 测试内容
-    var mdtext = 'fdasdfasrwa\n' +
-      '# fdjkslahf\n## jfdksljf\n### jfdksljf\n#### jfdksljf\n##### jfdksljf\n' +
-      '- kdlshafe\n```java\nint a = 10;\n```\n' +
-      '[中文](https://www.baidu.com)\n\n' +
-      '> 测试文本，多点好 \n' +
-      '> jfdklsjf'
-    this.articleContent = mdtext
-    console.log(this)
+    // 在初始化后获取文章数据
+    this.getArticleContent()
   }
 }
 </script>

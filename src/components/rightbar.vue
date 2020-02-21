@@ -10,11 +10,13 @@
         <el-row>
           <el-col :span="15">
             <el-input v-model="searchText"
-                      placeholder="请输入内容"></el-input>
+                      placeholder="请输入内容"
+                      clearable></el-input>
           </el-col>
           <el-col :push="2"
                   :span="6">
-            <el-button round>搜索</el-button>
+            <el-button @click="searchBut"
+                       round>搜索</el-button>
           </el-col>
         </el-row>
       </div>
@@ -82,6 +84,10 @@ export default {
   computed: {},
   watch: {},
   methods: {
+    searchBut: function () {
+      // 在点击搜索按钮时，将关键词数据上传到父组件，再由父组件传到文章列表组件
+      if (this.searchText !== '') { this.$emit('search', this.searchText) }
+    }
   },
   // 生命周期 - 创建完成（可以访问当前this实例）
   created () {

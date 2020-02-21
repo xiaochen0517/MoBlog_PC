@@ -26,7 +26,7 @@ export default new Router({
         alias: '/main'
       },
       {
-        path: 'articlecontent',
+        path: 'articlecontent/:id',
         component: articlecontent,
         alias: '/article'
       },

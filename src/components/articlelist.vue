@@ -37,9 +37,12 @@
       </el-card>
     </div>
     <br>
+    <!-- 底部换页控件 -->
     <el-pagination background
                    layout="prev, pager, next"
-                   :total="1000">
+                   :total="totalSize"
+                   :current-page.sync="currentPage"
+                   @current-change="currentChange">
     </el-pagination>
   </div>
 </template>
@@ -49,24 +52,81 @@ export default {
   name: 'articlelist',
   data () {
     return {
+      currentPage: 1,
       activeIndex: '1',
-      date: new Date(),
-      articleList: [
-        { browse: 0, id: 1, label: ['JVM', 'Linux', 'Centos', '运维'], like: 0, publisht: '2020-02-11', sort: '分类1', title: 'Linux运维——服务管理', username: 'lxc' },
-        { browse: 0, id: 2, label: ['JVM', 'Linux', 'Centos', '运维'], like: 0, publisht: '2020-02-11', sort: '分类1', title: 'Linux运维——启动引导与修复', username: 'lxc' },
-        { browse: 0, id: 3, label: ['JVM', 'Linux', 'Centos', '运维'], like: 0, publisht: '2020-02-11', sort: '分类1', title: 'Eclipse 下载过慢问题', username: 'lxc' },
-        { browse: 0, id: 4, label: ['JVM', 'Linux', 'Centos', '运维'], like: 0, publisht: '2020-02-11', sort: '分类1', title: 'Linux运维——高级文件系统管理', username: 'lxc' },
-        { browse: 0, id: 5, label: ['JVM', 'Linux', 'Centos', '运维'], like: 0, publisht: '2020-02-11', sort: '分类1', title: 'JVM Garbage First 垃圾回收器', username: 'lxc' }
-      ]
+      articleList: [{ browse: 0, id: 1, label: [''], like: 0, publisht: '', sort: '', title: '', username: '' }],
+      totalSize: 1
     }
   },
+  props: ['msg'],
   components: {
   },
   methods: {
     article: function (id) {
-      console.log(id)
-      this.$router.push({ path: '/article', redirect: '/main/articlecontent' })
+      this.$router.push({ path: '/main/articlecontent/' + id })
       document.body.scrollTop = document.documentElement.scrollTop = 0
+    },
+    currentChange: function (val) {
+      this.getArticle()
+    },
+    // 获取首页文章列表
+    getArticle: function () {
+      var params = new URLSearchParams()
+      params.append('page', this.currentPage)
+      this.axios.get('http://127.0.0.1:8080/moblog/blog/homearticle', { params: params })
+        .then(response => {
+          var data = response.data
+          // 将文章关键词进行拆分
+          for (var i = 0; i < data.articlelist.length; i++) {
+            var labels = data.articlelist[i].label
+            data.articlelist[i].label = labels.split(',')
+          }
+          this.articleList = data.articlelist
+          this.totalSize = data.articlesize
+          document.body.scrollTop = document.documentElement.scrollTop = 0
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
+    },
+    // 获取搜索文章列表
+    getSearch: function () {
+      var params = new URLSearchParams()
+      params.append('keyword', this.msg)
+      params.append('page', this.currentPage)
+      this.axios.get('http://127.0.0.1:8080/moblog/blog/searcharticle', { params: params })
+        .then(response => {
+          var data = response.data
+          for (var i = 0; i < data.articlelist.length; i++) {
+            var labels = data.articlelist[i].label
+            data.articlelist[i].label = labels.split(',')
+          }
+          this.articleList = data.articlelist
+          this.totalSize = data.articlesize
+          document.body.scrollTop = document.documentElement.scrollTop = 0
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
+    }
+  },
+  watch: {
+    // 监听父组件传入的搜索关键词数据是否发生变化
+    msg (nv, ov) {
+      console.log('articleList --> ' + this.msg)
+      if (this.msg !== '') {
+        // 开始获取搜索数据
+        this.getSearch()
+      }
+    }
+  },
+  mounted () {
+    if (this.msg === '') {
+      // 获取首页文章
+      this.getArticle()
+    } else {
+      // 获取搜索文章
+      this.getSearch()
     }
   }
 }

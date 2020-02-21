@@ -10,11 +10,11 @@
         <el-container>
           <!-- 主内容区 -->
           <el-main>
-            <router-view />
+            <router-view :msg="keyword" />
           </el-main>
           <!-- 右侧边栏 -->
           <el-aside width="300px">
-            <crightbar />
+            <crightbar @search="searchClick" />
           </el-aside>
         </el-container>
         <!-- 底部栏 -->
@@ -42,20 +42,20 @@ export default {
   name: 'main1',
   data () {
     return {
-      activeIndex: '1',
-      date: new Date(),
-      articleList: [
-        { browse: 0, id: 1, label: ['JVM', 'Linux', 'Centos', '运维'], like: 0, publisht: '2020-02-11', sort: '分类1', title: 'Linux运维——服务管理', username: 'lxc' },
-        { browse: 0, id: 1, label: ['JVM', 'Linux', 'Centos', '运维'], like: 0, publisht: '2020-02-11', sort: '分类1', title: 'Linux运维——启动引导与修复', username: 'lxc' },
-        { browse: 0, id: 1, label: ['JVM', 'Linux', 'Centos', '运维'], like: 0, publisht: '2020-02-11', sort: '分类1', title: 'Eclipse 下载过慢问题', username: 'lxc' },
-        { browse: 0, id: 1, label: ['JVM', 'Linux', 'Centos', '运维'], like: 0, publisht: '2020-02-11', sort: '分类1', title: 'Linux运维——高级文件系统管理', username: 'lxc' },
-        { browse: 0, id: 1, label: ['JVM', 'Linux', 'Centos', '运维'], like: 0, publisht: '2020-02-11', sort: '分类1', title: 'JVM Garbage First 垃圾回收器', username: 'lxc' }
-      ]
+      keyword: ''
     }
   },
   computed: {},
   watch: {},
   methods: {
+    searchClick: function (val) {
+      this.keyword = val
+      console.log('main中接收到的数据-->' + this.keyword)
+      if (this.$route.path !== '/main/articlelist') {
+        this.$router.push({ path: '/main/articlelist' })
+        document.body.scrollTop = document.documentElement.scrollTop = 0
+      }
+    }
   },
   // 生命周期 - 创建完成（可以访问当前this实例）
   created () { },
