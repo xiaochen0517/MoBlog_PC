@@ -28,30 +28,11 @@
         <span>文章推荐</span>
       </div>
       <!-- 文章推荐list -->
-      <div>
-        <img width="50px"
-             height="50px"
-             src="http://i2.w.yun.hjfile.cn/doc/201303/54c809bf-1eb2-400b-827f-6f024d7d599b_00.jpg"
-             alt="img"
-             style="float: left;" />
-        <div style="float: left;margin-left: 10px;">
-          <h3>卡片名称</h3>
-          <div>列表内容</div>
-        </div>
-        <div style="clear: both;"></div>
-      </div>
-      <el-divider></el-divider>
-      <div>
-        <img width="50px"
-             height="50px"
-             src="http://i2.w.yun.hjfile.cn/doc/201303/54c809bf-1eb2-400b-827f-6f024d7d599b_00.jpg"
-             alt="img"
-             style="float: left;" />
-        <div style="float: left;margin-left: 10px;">
-          <h3>卡片名称</h3>
-          <div>列表内容</div>
-        </div>
-        <div style="clear: both;"></div>
+      <div v-for="(item, index) in recommend"
+           :key="index">
+        <el-link type="primary"
+                 @click="showArticle(item.id)">{{item.title}}</el-link>
+        <el-divider v-if="index != (recommend.length-1)"></el-divider>
       </div>
     </el-card>
     <el-card class="box-card">
@@ -78,7 +59,8 @@ export default {
   name: 'RightBar',
   data () {
     return {
-      searchText: ''
+      searchText: '',
+      recommend: []
     }
   },
   computed: {},
@@ -87,6 +69,28 @@ export default {
     searchBut: function () {
       // 在点击搜索按钮时，将关键词数据上传到父组件，再由父组件传到文章列表组件
       if (this.searchText !== '') { this.$emit('search', this.searchText) }
+    },
+    // 获取推荐
+    getRecommend: function () {
+      var params = new URLSearchParams()
+      params.append('page', this.currentPage)
+      this.axios.get('http://127.0.0.1:8080/moblog/blog/recommend', { params: params })
+        .then(response => {
+          var data = response.data
+          if (data.status === 404) {
+            // 获取推荐错误
+            return
+          }
+          this.recommend = data.lists
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    },
+    showArticle: function (id) {
+      // 显示文章，跳转路由
+      this.$router.push({ path: '/main/articlecontent/' + id })
+      document.body.scrollTop = document.documentElement.scrollTop = 0
     }
   },
   // 生命周期 - 创建完成（可以访问当前this实例）
@@ -94,6 +98,7 @@ export default {
   },
   // 生命周期 - 挂载完成（可以访问DOM元素）
   mounted () {
+    this.getRecommend()
   },
   // 生命周期 - 创建之前
   beforeCreate () { },

@@ -2,23 +2,10 @@
 <template>
   <div class='Footer'>
     <el-row>
-      <el-col :span="20"
-              :push="2"
-              class="links">
-        <el-link type="info"
-                 :underline="false">主要链接</el-link>
-        <el-link type="info"
-                 :underline="false">主要链接</el-link>
-        <el-link type="info"
-                 :underline="false">主要链接</el-link>
-        <el-link type="info"
-                 :underline="false">主要链接</el-link>
-        <el-link type="info"
-                 :underline="false">主要链接</el-link>
-        <el-link type="info"
-                 :underline="false">主要链接</el-link>
-        <el-link type="info"
-                 :underline="false">主要链接</el-link>
+      <el-col :span="3"
+              class="links"
+              v-for="(item, index) in 8"
+              :key="index">
         <el-link type="info"
                  :underline="false">主要链接</el-link>
       </el-col>
@@ -29,7 +16,7 @@
               :push="1"
               style="text-align: left;">
         <div>
-          备案号：
+          备案号：{{records}}
         </div>
       </el-col>
     </el-row>
@@ -37,7 +24,7 @@
       <el-col :span="20"
               :push="2">
         <div>
-          <p>Copyright 2020 个人博客 · BY：MoChen</p>
+          <p>Copyright © 2020 · BY：MoChen</p>
         </div>
       </el-col>
     </el-row>
@@ -51,6 +38,8 @@ export default {
   name: 'Footer',
   data () {
     return {
+      blogrolls: {},
+      records: '晋-123456'
     }
   },
   computed: {},
@@ -92,10 +81,5 @@ export default {
 .el-divider {
   width: 96%;
   margin-left: 2%;
-}
-
-.links > .el-link {
-  margin-left: 20px;
-  margin-right: 20px;
 }
 </style>

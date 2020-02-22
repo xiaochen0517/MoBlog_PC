@@ -9,7 +9,12 @@
            class="clearfix"
            style="text-align: center;">
         <h2>{{articleTitle}}</h2>
-        <p>{{articleTime}} 分类:{{articleSort}} 阅读:{{articleBrowse}}</p>
+        <div>
+          <i class="el-icon-date">{{articleTime}}</i>
+          <i class="el-icon-s-flag">{{articleSort}}</i>
+          <i class="el-icon-view">{{articleBrowse}}</i>
+          <i class="el-icon-s-custom">{{articleUsername}}</i>
+        </div>
       </div>
       <mavon-editor :value="articleContent"
                     :subfield="false"
@@ -17,6 +22,10 @@
                     :toolbarsFlag="false"
                     :boxShadow="false"
                     :transition="false"></mavon-editor>
+      <!-- 错误信息显示 -->
+      <div id="returnMsg"
+           class="returnMsg"
+           v-if="returnShow">{{returnMsg}}</div>
     </el-card>
     <br>
     <!-- 评论卡片 -->
@@ -66,28 +75,49 @@ export default {
   name: 'articlecontent',
   data () {
     return {
+      articleId: 0,
       commentstr: '',
       circleUrl: '',
       articleTitle: '',
       articleTime: '',
       articleSort: '',
       articleBrowse: 0,
-      articleContent: ''
+      articleUsername: '',
+      articleContent: '',
+      returnMsg: '文章获取错误，请稍后重试！',
+      returnShow: false
     }
   },
   components: {
     cbread
   },
+  watch: {
+    // 防止在文章页面点击推荐不刷新文章
+    $route () {
+      this.getArticleContent()
+    }
+  },
   methods: {
     // 获取文章具体内容
     getArticleContent: function () {
+      this.articleId = this.$route.params.id
       var params = new URLSearchParams()
-      params.append('id', this.$route.params.id)
+      params.append('id', this.articleId)
       this.axios.get('http://127.0.0.1:8080/moblog/blog/article', { params: params })
         .then(response => {
           var data = response.data.article
-          console.log(data)
-
+          // 将信息隐藏
+          this.returnShow = false
+          // 判断获取的数据
+          if (data.status === 404) {
+            // 参数错误
+            this.returnMsg = '参数错误，请稍后重试！'
+            this.returnShow = true
+          } else if (data.status === 405) {
+            // 文章数据为空
+            this.returnMsg = '文章获取错误，请稍后重试！'
+            this.returnShow = true
+          }
           // for (var i = 0; i < data.articlelist.length; i++) {
           //   var labels = data.articlelist[i].label
           //   data.articlelist[i].label = labels.split(',')
@@ -97,9 +127,12 @@ export default {
           this.articleSort = data.sort
           this.articleBrowse = data.browse
           this.articleContent = data.content
+          this.articleUsername = data.username
         })
         .catch(function (error) {
           console.log(error)
+          this.returnMsg = '文章获取错误，请稍后重试！'
+          this.returnShow = true
         })
     }
   },
@@ -111,4 +144,10 @@ export default {
 </script>
 
 <style scoped>
+.returnMsg,
+#returnMsg {
+  width: 0 auto;
+  text-align: center;
+  font-weight: bold;
+}
 </style>
