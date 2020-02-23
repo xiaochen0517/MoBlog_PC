@@ -1,13 +1,13 @@
 <!-- header -->
 <template>
   <div class='Header'>
-    <el-menu :default-active="activeIndex"
-             class="el-menu-demo"
+    <el-menu class="el-menu-demo"
              mode="horizontal"
-             @select="handleSelect">
-      <el-menu-item index="1">首页</el-menu-item>
-      <el-menu-item index="2">介绍</el-menu-item>
-      <el-menu-item index="3"
+             default-active="/main/articlelist"
+             router>
+      <el-menu-item index="/main/articlelist">首页</el-menu-item>
+      <el-menu-item index="/main/porfile">介绍</el-menu-item>
+      <el-menu-item @click="toConsole"
                     style="float: right;">Mochen</el-menu-item>
     </el-menu>
   </div>
@@ -20,7 +20,6 @@ export default {
   name: 'Header',
   data () {
     return {
-      activeIndex: '1'
     }
   },
   computed: {},
@@ -29,14 +28,25 @@ export default {
     handleSelect (key, keyPath) {
       switch (key) {
         case '1':
-          this.$router.push({ path: '/main', redirect: '/main/articlelist' })
+          this.$router.push({ path: '/main/articlelist' })
           break
         case '2':
-          this.$router.push({ path: '/porfile', redirect: '/main/porfile' })
+          this.$router.push({ path: '/main/porfile' })
           break
         case '3':
-          this.$router.push({ path: '/login' })
+          if (this.$Cookies.get('un') === undefined || this.$Cookies.get('un') === '') {
+            this.$router.push({ path: '/login' })
+          } else {
+            this.$router.push({ path: '/console/home' })
+          }
           break
+      }
+    },
+    toConsole: function () {
+      if (this.$Cookies.get('un') === undefined || this.$Cookies.get('un') === '') {
+        this.$router.push({ path: '/login' })
+      } else {
+        this.$router.push({ path: '/console/home' })
       }
     }
   },

@@ -13,7 +13,7 @@
             <router-view :msg="keyword" />
           </el-main>
           <!-- 右侧边栏 -->
-          <el-aside width="300px">
+          <el-aside width="30%">
             <crightbar @search="searchClick" />
           </el-aside>
         </el-container>

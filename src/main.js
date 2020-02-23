@@ -8,6 +8,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import axios from 'axios'
 import mavonEditor from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
+import Cookies from 'js-cookie'
 
 // use
 Vue.use(mavonEditor)
@@ -15,11 +16,17 @@ Vue.use(mavonEditor)
 Vue.config.productionTip = false
 Vue.use(element)
 Vue.prototype.axios = axios
+Vue.prototype.$Cookies = Cookies
 axios.defaults.withCredentials = true
+axios.defaults.baseURL = 'http://192.168.0.103:8080/moblog/'
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
+  data () {
+    return {
+    }
+  },
   router,
   components: { App },
   template: '<App/>'

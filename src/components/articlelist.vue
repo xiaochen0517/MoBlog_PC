@@ -94,7 +94,7 @@ export default {
     getArticle: function () {
       var params = new URLSearchParams()
       params.append('page', this.currentPage)
-      this.axios.get('http://127.0.0.1:8080/moblog/blog/homearticle', { params: params })
+      this.axios.get('blog/homearticle', { params: params })
         .then(response => {
           var data = response.data
           // 将信息隐藏
@@ -131,7 +131,7 @@ export default {
       var params = new URLSearchParams()
       params.append('keyword', this.msg)
       params.append('page', this.currentPage)
-      this.axios.get('http://127.0.0.1:8080/moblog/blog/searcharticle', { params: params })
+      this.axios.get('blog/searcharticle', { params: params })
         .then(response => {
           var data = response.data
           if (data.status === 404) {

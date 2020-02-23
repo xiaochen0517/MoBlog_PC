@@ -74,7 +74,7 @@ export default {
     getRecommend: function () {
       var params = new URLSearchParams()
       params.append('page', this.currentPage)
-      this.axios.get('http://127.0.0.1:8080/moblog/blog/recommend', { params: params })
+      this.axios.get('blog/recommend', { params: params })
         .then(response => {
           var data = response.data
           if (data.status === 404) {

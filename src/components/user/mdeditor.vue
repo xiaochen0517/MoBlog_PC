@@ -81,13 +81,12 @@ export default {
 <style scoped>
 .el-input,
 .title {
-  width: 79%;
+  width: 60%;
 }
 
 .el-button {
-  width: 8%;
+  width: 15%;
   margin-left: 1%;
-  margin-right: 1%;
 }
 
 #md-box {
