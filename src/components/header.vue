@@ -25,29 +25,26 @@ export default {
   computed: {},
   watch: {},
   methods: {
-    handleSelect (key, keyPath) {
-      switch (key) {
-        case '1':
-          this.$router.push({ path: '/main/articlelist' })
-          break
-        case '2':
-          this.$router.push({ path: '/main/porfile' })
-          break
-        case '3':
-          if (this.$Cookies.get('un') === undefined || this.$Cookies.get('un') === '') {
-            this.$router.push({ path: '/login' })
-          } else {
-            this.$router.push({ path: '/console/home' })
-          }
-          break
-      }
-    },
+    // 检查用户是否登录
     toConsole: function () {
-      if (this.$Cookies.get('un') === undefined || this.$Cookies.get('un') === '') {
-        this.$router.push({ path: '/login' })
-      } else {
-        this.$router.push({ path: '/console/home' })
-      }
+      // 检查用户是否登录
+      this.axios.get('user/loginstatus')
+        .then(response => {
+          var data = response.data
+          if (data.status === 200) {
+            // 处于登录状态
+            this.$router.push({ path: '/console/home' })
+          } else {
+            // 需重新登录
+            this.$Cookies.set('un', '')
+            this.$router.push({ path: '/login' })
+          }
+        })
+        .catch(error => {
+          console.log(error)
+          this.$Cookies.set('un', '')
+          this.$router.push({ path: '/login' })
+        })
     }
   },
   // 生命周期 - 创建完成（可以访问当前this实例）

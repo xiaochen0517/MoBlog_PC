@@ -22,6 +22,13 @@
                     :toolbarsFlag="false"
                     :boxShadow="false"
                     :transition="false"></mavon-editor>
+      <!-- 点赞按钮 -->
+      <div width="100%"
+           style="text-align: center;padding: 10px;">
+        <el-button type="danger"
+                   @click="likeArticle"
+                   icon="el-icon-lollipop">收藏</el-button>
+      </div>
       <!-- 错误信息显示 -->
       <div id="returnMsg"
            class="returnMsg"
@@ -144,7 +151,7 @@ export default {
           this.articleUsername = data.username
           this.getComment(1)
         })
-        .catch(function (error) {
+        .catch((error) => {
           console.log(error)
           this.returnMsg = '文章获取错误，请稍后重试！'
           this.returnShow = true
@@ -224,6 +231,7 @@ export default {
     currentChange: function (val) {
       this.getComment(val)
     },
+    // 获取评论
     getComment: function (page) {
       if (this.articleId < 1) {
         // 文章id错误
@@ -245,6 +253,71 @@ export default {
         })
         .catch(function (error) {
           console.log(error)
+        })
+    },
+    // 收藏文章
+    likeArticle: function () {
+      // 判断是否处于登录状态
+      // 判断是否登录
+      var un = this.$Cookies.get('un')
+      if (un === undefined || un === '') {
+        // 未登录，跳转到登录界面
+        this.$message({
+          showClose: true,
+          message: '请先登录！',
+          type: 'error'
+        })
+        this.$router.push({ path: '/login' })
+        return
+      }
+      // 开始提交
+      var params = new URLSearchParams()
+      params.append('username', un)
+      params.append('aid', this.articleId)
+      this.axios.post('user/articlelike', params)
+        .then(response => {
+          var data = response.data
+          if (data.status === 200) {
+            this.$message({
+              showClose: true,
+              message: '成功收藏！',
+              type: 'success'
+            })
+            this.commentstr = ''
+            this.currentPage = 1
+            this.getComment(1)
+          } else if (data.status === 407) {
+            // 已经收藏
+            this.$message({
+              showClose: true,
+              message: '已经收藏过了哦！',
+              type: 'error'
+            })
+          } else if (data.status === 499) {
+            // 需要重新登录
+            this.$message({
+              showClose: true,
+              message: '请先登录！',
+              type: 'error'
+            })
+            this.$Cookies.set('un', '')
+            this.$router.push({ path: '/login' })
+          } else {
+            this.$message({
+              showClose: true,
+              message: '收藏失败！',
+              type: 'error'
+            })
+          }
+        })
+        .catch(function (error) {
+          console.log(error)
+          // 提交失败
+          this.$message({
+            showClose: true,
+            message: '网络错误，请稍后重试！',
+            type: 'error'
+          })
         })
     }
   },

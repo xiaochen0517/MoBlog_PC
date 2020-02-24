@@ -1,13 +1,31 @@
 <!-- userhome -->
 <template>
   <div class="userhome">
-    <p>home</p>
-    <el-button type="primary"
-               @click="logout">注销</el-button>
+    <el-card class="box-card">
+      <div slot="header"
+           class="clearfix">
+        <span>用户信息</span>
+        <el-button style="float: right;padding: 3px 0px"
+                   type="text"
+                   @click="logout">注销</el-button>
+      </div>
+      <div>
+        <p>昵称：</p>
+        <el-divider></el-divider>
+        <p>地址：</p>
+        <el-divider></el-divider>
+        <p>邮箱：</p>
+        <el-divider></el-divider>
+        <p>电话：</p>
+        <el-divider></el-divider>
+        <p>介绍：</p>
+      </div>
+    </el-card>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+
 export default {
   name: 'userhome',
   data () {

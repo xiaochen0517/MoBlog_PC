@@ -3,15 +3,17 @@
   <div class="console">
     <el-container>
       <!-- 头部 -->
-      <el-header>
+      <el-header style="text-align: center;padding-top: 18px">
         <el-page-header @back="goBack"
                         content="用户控制台"
                         title="主页" />
       </el-header>
       <el-container>
         <!-- 左侧导航栏 -->
-        <el-aside width="15%">
+        <el-aside width="15%"
+                  style="min-height: 100%;height: auto;">
           <el-menu default-active="2"
+                   style="min-height: 100%;height: auto;"
                    class="el-menu-vertical-demo"
                    router>
             <el-menu-item index="/console/home">
@@ -73,15 +75,18 @@
           </el-menu>
         </el-aside>
         <!-- 主内容区 -->
-        <el-main>
+        <el-main style="min-height: 100%;height: auto;">
           <router-view></router-view>
         </el-main>
       </el-container>
     </el-container>
+    <cbacktop />
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+import cbacktop from '../backtop'
+
 export default {
   name: 'console',
   data () {
@@ -97,6 +102,7 @@ export default {
     }
   },
   components: {
+    cbacktop
   },
   // 生命周期 - 创建完成（可以访问当前this实例）
   created () { },
