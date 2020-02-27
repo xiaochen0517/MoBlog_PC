@@ -189,6 +189,12 @@ export default {
               this.$Cookies.set('username', '', { expires: this.cookieTime })
               this.$Cookies.set('password', '', { expires: this.cookieTime })
             }
+            // 提示成功登录
+            this.$message({
+              showClose: true,
+              message: '登录成功！',
+              type: 'success'
+            })
             // 开始跳转
             this.$Cookies.set('un', this.username)
             if (data.adminstatus === true) {

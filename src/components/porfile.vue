@@ -6,23 +6,20 @@
       <div slot="header"
            class="clearfix"
            style="text-align: center;">
-        <h3>个人介绍</h3>
+        <h2>个人介绍</h2>
       </div>
       <div>
-        列表内容
-        <el-row>
-          <el-col :span="12">
-            <img src="@/assets/logo.png"
-                 alt="">
-          </el-col>
-          <el-col :span="12">
-            <ul>
-              <li>test1</li>
-              <li>test1</li>
-              <li>test1</li>
-            </ul>
-          </el-col>
-        </el-row>
+        <div style="width: 100%;text-align: center;">
+          <img :src="perImg"
+               style="width: 300px;height: 300px;"
+               alt="perphoto">
+        </div>
+        <mavon-editor :value="perContent"
+                      :subfield="false"
+                      :defaultOpen="'preview'"
+                      :toolbarsFlag="false"
+                      :boxShadow="false"
+                      :transition="false"></mavon-editor>
       </div>
     </el-card>
   </div>
@@ -33,14 +30,38 @@ export default {
   name: '',
   data () {
     return {
+      perImg: '',
+      perContent: ''
     }
   },
   components: {
   },
+  methods: {
+    // 获取内容
+    getPerMsg () {
+      this.axios.get('blog/permsg')
+        .then(response => {
+          var data = response.data
+          // 判断获取的数据
+          if (data.status === 200) {
+            this.perImg = data.perphoto
+            this.perContent = data.percontent
+          } else if (data.status === 404) {
+            // 获取到的轮播图为0
+          }
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    }
+  },
   // 生命周期 - 创建完成（可以访问当前this实例）
   created () { },
   // 生命周期 - 挂载完成（可以访问DOM元素）
-  mounted () { },
+  mounted () {
+    // 开始获取
+    this.getPerMsg()
+  },
   // 生命周期 - 创建之前
   beforeCreate () { },
   // 生命周期 - 挂载之前

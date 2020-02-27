@@ -10,7 +10,7 @@
       </el-header>
       <el-container>
         <!-- 左侧导航栏 -->
-        <el-aside width="15%"
+        <el-aside width="18%"
                   style="min-height: 100%;height: auto;">
           <el-menu default-active="2"
                    style="min-height: 100%;height: auto;"

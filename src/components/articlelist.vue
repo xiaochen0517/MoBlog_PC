@@ -3,10 +3,12 @@
   <div class="articlelist">
     <!-- 轮播图 -->
     <el-carousel height="150px">
-      <el-carousel-item v-for="item in 4"
-                        :key="item"
+      <el-carousel-item v-for="(item, index) in homePhotos"
+                        :key="index"
                         style="background-color: blue;">
-        <h3 class="small">{{ item }}</h3>
+        <img style="width: 100%;height: 100%;"
+             :src="item.link"
+             :alt="item.name">
       </el-carousel-item>
     </el-carousel>
     <br />
@@ -34,9 +36,9 @@
                class="el-icon-medal-1"></i>
           </h3>
           <div>
-            <i class="el-icon-date">{{item.publisht}}</i>
-            <i class="el-icon-s-flag">{{item.sort}}</i>
-            <i class="el-icon-view">{{item.browse}}</i>
+            <i class="el-icon-date">{{item.publisht}} </i>
+            <i class="el-icon-s-flag">{{item.sort}} </i>
+            <i class="el-icon-view">{{item.browse}} </i>
             <i class="el-icon-s-custom">{{item.username}}</i>
           </div>
           <br>
@@ -74,11 +76,17 @@ export default {
       ],
       totalSize: 1,
       returnMsg: '文章获取错误，请稍后重试！',
-      returnShow: false
+      returnShow: false,
+      homePhotos: [
+        // { name: 'aaa', link: 'https://08imgmini.eastday.com/mobile/20200225/20200225054517_cf6647be23e5aeaaf326a744fd6ad601_1.jpeg' },
+        // { name: 'aaa', link: 'https://08imgmini.eastday.com/mobile/20200225/20200225054517_cf6647be23e5aeaaf326a744fd6ad601_1.jpeg' },
+      ]
     }
   },
   props: ['msg'],
   components: {
+  },
+  computed: {
   },
   methods: {
     // 跳转到文章内容
@@ -158,6 +166,22 @@ export default {
           this.returnMsg = '文章获取错误，请稍后重试！'
           this.returnShow = true
         })
+    },
+    // 获取轮播图数据
+    getHomePhoto: function () {
+      this.axios.get('blog/homephotos')
+        .then(response => {
+          var data = response.data
+          // 判断获取的数据
+          if (data.status === 200) {
+            this.homePhotos = data.homephotos
+          } else if (data.status === 404) {
+            // 获取到的轮播图为0
+          }
+        })
+        .catch(error => {
+          console.log(error)
+        })
     }
   },
   watch: {
@@ -171,6 +195,8 @@ export default {
     }
   },
   mounted () {
+    // 获取轮播图数据
+    this.getHomePhoto()
     if (this.msg === '') {
       // 获取首页文章
       this.getArticle()
