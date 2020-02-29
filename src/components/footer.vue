@@ -72,6 +72,9 @@ export default {
               }
               // 将拆分好的数据添加进页面
               this.blogrolls = endresult
+            } else {
+              // 直接写入数据
+              this.blogrolls.push(data.blogrolls)
             }
           } else if (data.status === 404) {
             // 获取到的友链为空

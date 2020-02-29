@@ -5,11 +5,9 @@
                @click="addBlogRollClick"
                style="margin-bottom: 10px;">添加友链</el-button>
     <el-table :data="blogRollData"
-              border
               style="width: 100%">
       <el-table-column fixed
-                       prop="id"
-                       label="ID"
+                       type="index"
                        width="100">
       </el-table-column>
       <el-table-column prop="name"
@@ -34,6 +32,7 @@
     <!-- 编辑弹窗 -->
     <el-dialog :title="dialogTypeTitle"
                :visible.sync="dialogVisible"
+               @close="closeDialog"
                width="50%">
       <!-- 友链名称 -->
       <div style="margin-bottom: 10px;">
@@ -218,8 +217,6 @@ export default {
               // 关闭弹窗，刷新数据
               this.dialogVisible = false
               this.getBlogRoll()
-              this.blogRollName = ''
-              this.blogRollLink = ''
             } else {
               this.$message({
                 showClose: true,
@@ -255,8 +252,6 @@ export default {
               this.dialogVisible = false
               this.getBlogRoll()
               this.blogRollId = 0
-              this.blogRollName = ''
-              this.blogRollLink = ''
             } else {
               this.$message({
                 showClose: true,
@@ -281,6 +276,11 @@ export default {
           type: 'error'
         })
       }
+    },
+    // 弹窗关闭时操作
+    closeDialog () {
+      this.blogRollName = ''
+      this.blogRollLink = ''
     }
   },
   components: {
