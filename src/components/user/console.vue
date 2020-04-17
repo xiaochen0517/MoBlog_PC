@@ -36,7 +36,7 @@
                 </el-menu-item>
               </el-menu-item-group>
             </el-submenu>
-            <el-menu-item index="/console/mdeditor">
+            <el-menu-item index="/console/mdeditor/-1">
               <i class="el-icon-edit"></i>
               <span slot="title">写文章</span>
             </el-menu-item>

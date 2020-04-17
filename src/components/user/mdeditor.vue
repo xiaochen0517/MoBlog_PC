@@ -57,8 +57,8 @@
       <div style="min-height: 100%;height: auto;">
         <!-- 发布按钮 -->
         <el-button style="width: 80%;margin-left: 10%;position: absolute;bottom: 10px;"
-                   @click="publishArticle"
-                   type="primary">发布文章</el-button>
+                   @click="commitClick"
+                   type="primary">{{buttonStr}}</el-button>
       </div>
     </el-drawer>
     <el-card class="box-card"
@@ -100,7 +100,9 @@ export default {
       sortStatus: false,
       newShow: false,
       newSortName: '',
-      labelStr: ''
+      labelStr: '',
+      type: 'publish',
+      buttonStr: '发布文章'
     }
   },
   components: {
@@ -318,6 +320,133 @@ export default {
             type: 'error'
           })
         })
+    },
+    // 发布编辑后的文章
+    editArticle () {
+      // 检查数据
+      // 文章名
+      if (this.title.length < 5) {
+        this.$message({
+          showClose: true,
+          message: '文章标题不可以小于5个字符！',
+          type: 'error'
+        })
+        return
+      }
+      // 文章内容
+      if (this.content.length < 5) {
+        this.$message({
+          showClose: true,
+          message: '文章内容不可以小于5个字符！',
+          type: 'error'
+        })
+        return
+      }
+      // 分类
+      if (this.chSort === '') {
+        this.$message({
+          showClose: true,
+          message: '请选择分类！',
+          type: 'error'
+        })
+        return
+      }
+      // 标签
+      if (this.labelStr === '') {
+        this.$message({
+          showClose: true,
+          message: '请输入标签！',
+          type: 'error'
+        })
+        return
+      }
+      var params = new URLSearchParams()
+      params.append('id', this.$route.params.id)
+      params.append('title', this.title)
+      params.append('sortid', this.chSort)
+      params.append('label', this.labelStr)
+      params.append('content', this.content)
+      this.axios.post('user/edituserarticle', params)
+        .then(response => {
+          var data = response.data
+          console.log(data)
+          if (data.status === 200) {
+            this.$message({
+              showClose: true,
+              message: '编辑成功！',
+              type: 'success'
+            })
+            // 清空数据
+            this.chSort = ''
+            this.newSortName = ''
+            this.labelStr = ''
+            this.drawer = false
+            this.title = ''
+            this.content = ''
+            // 跳转页面
+            this.$router.push({
+              path: `/console/myblog`
+            })
+          } else {
+            this.$message({
+              showClose: true,
+              message: '操作失败！',
+              type: 'error'
+            })
+          }
+        }).catch(error => {
+          console.log(error)
+          // 提交失败
+          this.$message({
+            showClose: true,
+            message: '网络错误，请稍后重试！',
+            type: 'error'
+          })
+        })
+    },
+    // 获取需要修改的文章
+    getEditArticle (aid) {
+      var params = new URLSearchParams()
+      params.append('id', aid)
+      this.axios.get('blog/article', { params: params })
+        .then(response => {
+          var data = response.data.article
+          // 将信息隐藏
+          this.returnShow = false
+          // 判断获取的数据
+          if (data.status === 404) {
+            // 参数错误
+            this.returnMsg = '参数错误，请稍后重试！'
+            this.returnShow = true
+          } else if (data.status === 405) {
+            // 文章数据为空
+            this.returnMsg = '文章获取错误，请稍后重试！'
+            this.returnShow = true
+          }
+          this.title = data.title
+          this.content = data.content
+          this.labelStr = data.label
+          // 判断sortid
+          for (var i = 0; i < this.sorts.length; i++) {
+            if (this.sorts[i].name === data.sort) {
+              this.chSort = this.sorts[i].id
+              break
+            }
+          }
+        })
+        .catch((error) => {
+          console.log(error)
+          this.returnMsg = '文章获取错误，请稍后重试！'
+          this.returnShow = true
+        })
+    },
+    commitClick () {
+      // 提交按钮
+      if (this.type === 'publish') {
+        this.publishArticle()
+      } else {
+        this.editArticle()
+      }
     }
   },
   // 生命周期 - 创建完成（可以访问当前this实例）
@@ -326,6 +455,13 @@ export default {
   mounted () {
     // 获取分类列表
     this.getSort()
+    var aid = this.$route.params.id
+    if (aid !== -1) {
+      // 修改文章，获取文章信息
+      this.getEditArticle(aid)
+      this.type = 'edit'
+      this.buttonStr = '完成修改'
+    }
   },
   // 生命周期 - 创建之前
   beforeCreate () { },

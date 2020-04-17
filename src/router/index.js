@@ -57,7 +57,7 @@ export default new Router({
         component: uhome
       },
       {
-        path: 'mdeditor',
+        path: 'mdeditor/:id',
         name: 'mdeditor',
         component: mdeditor
       },
