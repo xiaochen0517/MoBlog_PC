@@ -1,6 +1,10 @@
 <!-- sortmanage -->
 <template>
   <div class="sortmanage">
+    <!-- 添加按钮 -->
+    <el-button type="primary"
+               @click="addUserSortClick"
+               style="margin-bottom: 10px;">添加分类</el-button>
     <!-- 表格 -->
     <el-table :data="sorts"
               style="width: 100%">
@@ -33,6 +37,33 @@
                    @current-change="currentChange"
                    :hide-on-single-page="true">
     </el-pagination> -->
+    <!-- 编辑弹窗 -->
+    <el-dialog :title="dialogTypeTitle"
+               :visible.sync="dialogVisible"
+               @close="closeDialog"
+               width="40%">
+      <!-- 分类名称 -->
+      <el-row>
+        <el-col :span="6"
+                style="font-size: 16px;margin-top: 8px;margin-right: 10px;text-align: right;">
+          分类名：
+        </el-col>
+        <el-col :span="12">
+          <el-input type="text"
+                    placeholder="分类名"
+                    v-model="dialogSortName"
+                    maxlength="10"
+                    width="300px"
+                    show-word-limit />
+        </el-col>
+      </el-row>
+      <span slot="footer"
+            class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary"
+                   @click="confirmClick">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -42,7 +73,12 @@ export default {
   data () {
     return {
       sorts: [],
-      newSortName: ''
+      newSortName: '',
+      dialogType: 1,
+      dialogTypeTitle: '',
+      dialogVisible: false,
+      dialogSortName: '',
+      dialogSortId: 0
     }
   },
   computed: {},
@@ -124,11 +160,147 @@ export default {
           })
         })
     },
+    // 编辑分类名
     editUserSortClick (val) {
       console.log(val)
+      this.dialogType = 2
+      this.dialogTypeTitle = '编辑分类'
+      this.dialogSortName = val.name
+      this.dialogSortId = val.id
+      this.dialogVisible = true
     },
+    // 删除分类
     delUserSortClick (val) {
       console.log(val)
+      this.$confirm('此操作将永久删除该分类, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        var params = new URLSearchParams()
+        params.append('id', val.id)
+        this.axios.post('user/delsort', params)
+          .then(response => {
+            var data = response.data
+            if (data.status === 200) {
+              // 成功删除
+              this.$message({
+                showClose: true,
+                message: '删除成功',
+                type: 'success'
+              })
+              this.dialogVisible = false
+              this.getSort()
+            } else if (data.status === 407) {
+              this.$message({
+                showClose: true,
+                message: '当前分类下还有文章，不可以删除该分类！',
+                type: 'error'
+              })
+              this.dialogVisible = false
+            } else {
+              this.$message({
+                showClose: true,
+                message: '删除失败',
+                type: 'error'
+              })
+            }
+          })
+          .catch(error => {
+            console.log(error)
+            this.$message({
+              showClose: true,
+              message: '网络错误，请稍后重试！',
+              type: 'error'
+            })
+          })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
+    // 添加分类
+    addUserSortClick () {
+      this.dialogTypeTitle = '添加分类'
+      this.dialogVisible = true
+    },
+    // 新建编辑弹窗确定按钮
+    confirmClick () {
+      // 判断正在进行的操作
+      if (this.dialogType === 1) {
+        // 添加分类
+        var params = new URLSearchParams()
+        params.append('username', this.$Cookies.get('un'))
+        params.append('name', this.dialogSortName)
+        this.axios.post('user/addsort', params)
+          .then(response => {
+            var data = response.data
+            if (data.status === 200) {
+              // 成功添加
+              this.$message({
+                showClose: true,
+                message: '添加成功',
+                type: 'success'
+              })
+              this.dialogVisible = false
+              this.getSort()
+            } else {
+              this.$message({
+                showClose: true,
+                message: '添加失败',
+                type: 'error'
+              })
+            }
+          })
+          .catch(error => {
+            console.log(error)
+            this.$message({
+              showClose: true,
+              message: '网络错误，请稍后重试！',
+              type: 'error'
+            })
+          })
+      } else {
+        // 编辑分类
+        var params1 = new URLSearchParams()
+        params1.append('id', this.dialogSortId)
+        params1.append('name', this.dialogSortName)
+        this.axios.post('user/editsort', params1)
+          .then(response => {
+            var data = response.data
+            if (data.status === 200) {
+              // 成功添加
+              this.$message({
+                showClose: true,
+                message: '修改成功',
+                type: 'success'
+              })
+              this.dialogVisible = false
+              this.getSort()
+            } else {
+              this.$message({
+                showClose: true,
+                message: '修改失败',
+                type: 'error'
+              })
+            }
+          })
+          .catch(error => {
+            console.log(error)
+            this.$message({
+              showClose: true,
+              message: '网络错误，请稍后重试！',
+              type: 'error'
+            })
+          })
+      }
+    },
+    // 弹窗关闭时操作
+    closeDialog () {
+      this.dialogSortName = ''
+      this.dialogSortId = 0
     }
   },
   components: {
