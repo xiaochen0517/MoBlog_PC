@@ -291,14 +291,14 @@ export default {
             this.$message({
               showClose: true,
               message: '已经收藏过了哦！',
-              type: 'error'
+              type: 'info'
             })
           } else if (data.status === 499) {
             // 需要重新登录
             this.$message({
               showClose: true,
               message: '请先登录！',
-              type: 'error'
+              type: 'info'
             })
             this.$Cookies.set('un', '')
             this.$router.push({ path: '/login' })
