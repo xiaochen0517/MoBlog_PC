@@ -60,7 +60,11 @@ export default {
   // 生命周期 - 创建完成（可以访问当前this实例）
   created () { },
   // 生命周期 - 挂载完成（可以访问DOM元素）
-  mounted () { },
+  mounted () {
+    this.$Cookies.set('test', 'hello')
+    var data = this.$Cookies.get('test')
+    console.log(data)
+  },
   // 生命周期 - 创建之前
   beforeCreate () { },
   // 生命周期 - 挂载之前

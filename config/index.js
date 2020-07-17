@@ -10,7 +10,22 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    proxyTable: {
+      // '/user': {
+      //   target: 'http://admin.androidzy.cn/user/',
+      //   changeOrigin: true,
+      //   pathRewrite: {
+      //     '^/user': ''
+      //   }
+      // },
+      // '/blog': {
+      //   target: 'http://admin.androidzy.cn/moblog/blog/',
+      //   changeOrigin: true,
+      //   pathRewrite: {
+      //     '^/blog': ''
+      //   }
+      // }
+    },
 
     // Various Dev Server settings
     host: '192.168.43.179', // can be overwritten by process.env.HOST
@@ -50,7 +65,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
+    assetsPublicPath: './',
 
     /**
      * Source Maps

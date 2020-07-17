@@ -18,7 +18,7 @@ Vue.use(element)
 Vue.prototype.axios = axios
 Vue.prototype.$Cookies = Cookies
 axios.defaults.withCredentials = true
-axios.defaults.baseURL = 'http://192.168.43.179:8080/moblog/'
+axios.defaults.baseURL = 'http://admin.androidzy.cn/moblog/'
 
 /* eslint-disable no-new */
 new Vue({

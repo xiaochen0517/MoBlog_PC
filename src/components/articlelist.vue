@@ -102,7 +102,7 @@ export default {
     getArticle: function () {
       var params = new URLSearchParams()
       params.append('page', this.currentPage)
-      this.axios.get('blog/homearticle', { params: params })
+      this.axios.get('/blog/homearticle', { params: params })
         .then(response => {
           var data = response.data
           // 将信息隐藏
@@ -169,7 +169,7 @@ export default {
     },
     // 获取轮播图数据
     getHomePhoto: function () {
-      this.axios.get('blog/homephotos')
+      this.axios.get('/blog/homephotos')
         .then(response => {
           var data = response.data
           // 判断获取的数据

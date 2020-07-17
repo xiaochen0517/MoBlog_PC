@@ -284,7 +284,7 @@ export default {
         return
       }
       var params = new URLSearchParams()
-      params.append('username', this.$Cookies.get('un'))
+      params.append('username', this.$Cookies.get('username'))
       params.append('title', this.title)
       params.append('sortid', this.chSort)
       params.append('label', this.labelStr)
@@ -456,7 +456,8 @@ export default {
     // 获取分类列表
     this.getSort()
     var aid = this.$route.params.id
-    if (aid !== -1) {
+    console.log(aid)
+    if (aid > 0) {
       // 修改文章，获取文章信息
       this.getEditArticle(aid)
       this.type = 'edit'
